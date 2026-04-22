@@ -1,18 +1,18 @@
 import { useState, useEffect } from "react";
 import { db } from "./firebase";
 import { ref, onValue, set } from "firebase/database";
-
-const TEAM = ["Ana", "Bruno", "Carla", "Diego", "Elena", "Facundo", "Gabi", "Hernán"];
+ 
+const TEAM = ["Martin", "Mariana", "Antonella", "Matias", "Andrés", "Sergio", "Lucila"];
 const DAYS = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
 const DAY_SHORT = ["L", "Ma", "Mi", "J", "V"];
 const COLORS = [
   "#E8705A","#5A9BE8","#7EC88A","#E8C45A","#B45AE8",
   "#E87CAE","#5AE8D4","#E8955A"
 ];
-
+ 
 const today = new Date();
 const todayName = ["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"][today.getDay()];
-
+ 
 function getWeekLabel() {
   const mon = new Date(today);
   mon.setDate(today.getDate() - ((today.getDay() + 6) % 7));
@@ -20,7 +20,7 @@ function getWeekLabel() {
   fri.setDate(mon.getDate() + 4);
   return `${mon.getDate()}/${mon.getMonth()+1} – ${fri.getDate()}/${fri.getMonth()+1}/${fri.getFullYear()}`;
 }
-
+ 
 export default function App() {
   const [schedule, setSchedule] = useState({});
   const [selected, setSelected] = useState(null);
@@ -29,7 +29,7 @@ export default function App() {
   const [view, setView] = useState("week");
   const [activeDay, setActiveDay] = useState(DAYS.indexOf(todayName) >= 0 ? DAYS.indexOf(todayName) : 0);
   const [connected, setConnected] = useState(false);
-
+ 
   // Sync desde Firebase en tiempo real
   useEffect(() => {
     const scheduleRef = ref(db, "schedule");
@@ -39,24 +39,24 @@ export default function App() {
     });
     return () => unsub();
   }, []);
-
+ 
   useEffect(() => {
     if (selected) setMyDays(schedule[selected] || Array(5).fill(false));
   }, [selected, schedule]);
-
+ 
   const toggleDay = (i) => setMyDays(myDays.map((v, idx) => idx === i ? !v : v));
-
+ 
   const handleSave = async () => {
     if (!selected) return;
     await set(ref(db, `schedule/${selected}`), myDays);
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
   };
-
+ 
   const getPresentes = (di) => TEAM.filter(p => schedule[p] ? !schedule[p][di] : true);
   const getHO = (di) => TEAM.filter(p => schedule[p]?.[di]);
   const totalRegistered = TEAM.filter(p => schedule[p]).length;
-
+ 
   return (
     <div style={{ minHeight:"100vh", background:"#0F1117", fontFamily:"'DM Sans','Segoe UI',sans-serif", color:"#F0EDE8", padding:0 }}>
       <style>{`
@@ -80,7 +80,7 @@ export default function App() {
         .day-chip{padding:6px 14px;border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;border:1.5px solid transparent;transition:all 0.15s;user-select:none;}
         @media(max-width:700px){.main-grid{grid-template-columns:1fr !important;}.week-grid{grid-template-columns:1fr 1fr !important;}}
       `}</style>
-
+ 
       {/* Header */}
       <div style={{ background:"#161924", borderBottom:"1px solid rgba(255,255,255,0.07)", padding:"16px 24px", display:"flex", alignItems:"center", justifyContent:"space-between" }}>
         <div style={{ display:"flex", alignItems:"center", gap:12 }}>
@@ -98,12 +98,12 @@ export default function App() {
           </div>
         </div>
       </div>
-
+ 
       <div className="main-grid" style={{ maxWidth:900, margin:"0 auto", padding:"24px 20px", display:"grid", gridTemplateColumns:"1fr 300px", gap:20 }}>
-
+ 
         {/* LEFT */}
         <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
-
+ 
           {view === "week" ? (
             <div className="card" style={{ padding:20 }}>
               <p className="section-title">Vista semanal — quién viene</p>
@@ -188,7 +188,7 @@ export default function App() {
               })()}
             </div>
           )}
-
+ 
           {/* Stats */}
           <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:12 }}>
             {[
@@ -203,7 +203,7 @@ export default function App() {
             ))}
           </div>
         </div>
-
+ 
         {/* RIGHT */}
         <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
           <div className="card" style={{ padding:20 }}>
@@ -238,7 +238,7 @@ export default function App() {
             )}
             {!selected && <div style={{ textAlign:"center", padding:"24px 0", color:"#444", fontSize:13 }}>Seleccioná tu nombre para<br/>registrar tus días</div>}
           </div>
-
+ 
           <div className="card" style={{ padding:20 }}>
             <p className="section-title">Estado del equipo</p>
             {TEAM.map(p => {
